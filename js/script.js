@@ -1,5 +1,9 @@
+
+
+
 var recivedData, addedData;
-var jqXHR = $.getJSON('data/data.json');
+var jqXHR = $.getJSON('https://api.myjson.com/bins/3uoya');
+ jQuery.support.cors = true;
 jqXHR.complete(function(response) {
 	recivedData = response.responseJSON;
 	var header = $('h1').text();
@@ -12,9 +16,17 @@ jqXHR.complete(function(response) {
 	$("#info").html(output);
 });
 
-$.post('test.json', { name: "John", time: "2pm" }, function(response) {
-    alert( "Data Loaded: " + data );
-}, 'json');
+
+$.ajax({
+    url:"https://api.myjson.com/bins/3uoya",
+    type:"PUT",
+    data:'{"key_updated":"value_updated"}',
+    contentType:"application/json; charset=utf-8",
+    dataType:"json",
+    success: function(data, textStatus, jqXHR){
+    	alert("done!");
+    }
+});  
 
 
 
