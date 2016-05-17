@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Company organizer</title>
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+<body>
+	<div class="panel panel-default">
+	  <div class="panel-body">
+			<h1>Company organizer</h1>
+	  </div>
+	</div>
+
+	<button id="view">view json</button>
+	<button id="add">add json</button>
+	<button id="edit">edit json</button>
+	<button id="delete">delete json</button>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+			<section id="section_tree">
+				<h3>Company tree</h3>
+			</section><hr>
+				<p id="info"></p>
+			</div>
+			<div class="col-md-6">
+			<section id="section_name">
+				<h3>Add new company</h3>
+			</section><hr>
+			<div class="here"></div>
+				<form id="left_side">
+				  <div class="form-group">
+				    <label>Company name</label>
+				    <input type="text" class="form-control" id="company_name" placeholder="company name" required>
+				  </div>
+					<div class="form-group">
+					  <label>Company Estimated Earnings</label>
+					  <div class="input-group">
+					    <input type="text" class="form-control" id="company_money" placeholder="Amount" required>
+					    <div class="input-group-addon">$K (thousand)</div>
+					  </div>
+					</div>
+					<div class="form-group">
+					  <label>Pick parent company</label>
+						<select class="form-control parent"></select>
+					</div>
+					<div class="form-group">
+					  <label>Pick child company</label>
+						<select class="form-control child"></select>
+					</div>
+			  <button type="button" class="btn btn-default submit">Submit</button>
+			</form>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="js/script.js" type="text/javascript" charset="utf-8" async defer></script>
+</body>
+</html>

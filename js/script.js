@@ -42,24 +42,47 @@ function reviewdata() {
 /////////////////////////EDIT//////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-$('#edit').click(function () {
-	$('.here').append('<label>Pick company</label><div class="form-group"><select class="form-control company"></select></div>');
-	reviewdata();
-});
 
-$('.here').click(function () {
-	var companyIndex = $('.company option:selected').data("index");
+var dad, companyIndex;
+$('.picker').click(function () {
+	dad = $(this).parent().parent().parent().parent().attr('id');
+	companyIndex = $('#'+dad+' .company option:selected').data('index');
 	var companyObject = recivedData[companyIndex];
 	var name = companyObject.name;
-	$('#company_name').val(name);
+	$('#'+dad+' #company_name').val(name);
 	var money = companyObject.money;
-	$('#company_money').val(money);
+	$('#'+dad+' #company_money').val(money);
 	var parent = companyObject.parent;
-	$(".parent option[data-id="+parent+"]").prop('selected', true);
+	$('#'+dad+' .parent option[data-id="'+parent+'"]').prop('selected', true);
 	var child = companyObject.child; 
-	$(".child option[data-id="+child+"]").prop('selected', true);
+	$('#'+dad+' .child option[data-id="'+child+'"]').prop('selected', true);
 });
 
+$('.submit_edit').click(function () {
+	//slice before submit
+	console.log(addedData[companyIndex]);
+	addedData.splice(companyIndex, 1);
+	console.log(addedData);
+	var freeId = [];
+	for(var i=0; i<addedData.length; i++){
+		freeId.push(addedData[i].id);
+	}
+	freeId.sort(function(a, b){return a-b;});
+	freeId=freeId[freeId.length-1]+1;
+	var name = $('#'+dad+' #company_name').val();
+	var money = $('#'+dad+' #company_money').val();
+	var parent = $('#'+dad+' .parent option:selected').data("id");
+	var child = $('#'+dad+' .child option:selected').data("id");
+	var template = {
+		"id": freeId,
+		"name": name,
+		"money": money,
+		"parent": parent,
+		"child" : child
+	};
+	addedData.push(template);
+	postdata();
+});
 ///////////////////////////////////////////////////////////////////////////////
 /////////////////////////DELETE////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,13 +93,13 @@ $('#delete').click(function () {
 });
 
 ///////////////////////////////////////////////////////////////////////////////
-/////////////////////////DELETE////////////////////////////////////////////////
+/////////////////////////ADD///////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-$('.submit').click(function () {
+$('.submit_add').click(function () {
 	var freeId = [];
-	for(var i=0; i<recivedData.length; i++){
-		freeId.push(recivedData[i].id);
+	for(var i=0; i<addedData.length; i++){
+		freeId.push(addedData[i].id);
 	}
 	freeId.sort(function(a, b){return a-b;});
 	freeId=freeId[freeId.length-1]+1;
@@ -92,9 +115,7 @@ $('.submit').click(function () {
 		"parent": parent,
 		"child" : child
 	};
-	console.log(template);
 	addedData.push(template);
-	console.log(addedData);
 	postdata();
 });
 
