@@ -163,54 +163,48 @@ $('.submit_add').click(function () {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 function treeBuilder() {
-	parentCheck();
-};
-
-var htmlArray = [];
-
-function parentCheck(){
-	var parrentCheckArray=[];
 	for(var index in addedData){
-		parrentCheckArray.push(addedData[index].id);
+		parentCheck(addedData[index],index);
+		hasChild(addedData[index].id);
 	}
-	//console.log(parrentCheckArray);
-	var template='';
-	for (var index in addedData) {
-		if(addedData[index].parent === 0){
-			template += '<ul><li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+ '<ul></ul></li></ul>';
-			parrentCheckArray.push(addedData[index].id);
+};
+var arr = [];
+function parentCheck(ob,ind){
+	var getHtml = 	$("#tree").html();
+	var getHtmlById = $('#tree li[data-id="'+ob.id+'"] ul').html();
+	if(ob.parent === 0 && $('li[data-id="'+ob.id+'"]').length <=0){
+		arr.push(ob.id);
+		var template = '<ul><li data-index="'+ind+'" data-id="'+ob.id+'" data-money="'+ob.money+'">' +ob.name+ '<ul></ul></li></ul><hr>';
+		$("#tree").html(getHtml+template);
+	}else {
+		for(var index in arr){
+		findChild(arr[index]);
 		}
-	}
-	$("#tree").html(template);
-	for(var index in parrentCheckArray){
-	findChild(parrentCheckArray[index]);
 	}
 };
 
 function findChild(id) {
 	var template='';
-	var arr=[];
 	for(var index in addedData){
 		if(addedData[index].parent === id && hasChild(addedData[index].id) === true){
 			template += '<li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+ '<ul></ul></li>';
-			arr.push(addedData[index].id);
-		}else if(addedData[index].parent === id && hasChild() === false){
+		}else if(addedData[index].parent === id && hasChild(addedData[index].id) === false){
 			template += '<li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+ '</li>';
-			arr.push(addedData[index].id);
 		}
 	}
-	//console.log(arr)
 	$('#tree li[data-id="'+id+'"] ul').html(template);
 };
 
 function hasChild(id) {
 	for (var index in addedData) {
 		if(addedData[index].parent === id){
+			arr.push(addedData[index].id);
 			return true;
 		}
 	}
 	return false;
 };
+
 ///////////////////////////////////////////////////////////////////////////////
 /////////////////////////SORT//////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
