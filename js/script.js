@@ -22,7 +22,7 @@ function postdata() {
 				});
 	    	reviewdata();
 	    	$('input').val('');
-	    	$('option[data-id="none"]').prop('selected', true);
+	    	$('option[data-id="0"]').prop('selected', true);
 	    },
 	    error: function(data, textStatus, jqXHR){
 		    $(function(){
@@ -42,10 +42,9 @@ function reviewdata() {
  	jQuery.support.cors = true;
 	jqXHR.complete(function(response) {
 		recivedData = response.responseJSON;
-		addedData = recivedData;
-		addedData = sortByKey(addedData,'parent');
+		addedData = sortByKey(recivedData,'parent');
 		$('h1').html("<b>Company organizer</b></br><i> status: "+ Object.keys(addedData).length +" company's loaded</i>");
-		var list = '<option data-id="none">none</option>';
+		var list = '<option data-id="0">none</option>';
 		for (var key in addedData) {
 			list += '<option data-index="'+ key +'" data-id="'+addedData[key].id+'">' + addedData[key].name + '</option>';
 		}
@@ -88,7 +87,7 @@ $('.submit_edit').click(function () {
 		var money = $('#'+dad+' #company_money').val();
 		var parent = $('#'+dad+' .parent option:selected').data("id");
 		addedData[companyIndex].name = name;
-		addedData[companyIndex].money = money;
+		addedData[companyIndex].money = Number(money);
 		addedData[companyIndex].parent = parent;
 		postdata();
 	}
@@ -98,7 +97,7 @@ $('.submit_edit').click(function () {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 $('.submit_delete').click(function () {
-	if($('#page3 .company option:selected').data("id") === "none"){
+	if($('#page3 .company option:selected').data("id") === 0){
 		$(function(){
 			new PNotify({
 				title: 'Oh No!',
@@ -151,7 +150,7 @@ $('.submit_add').click(function () {
 		var template = {
 			"id": freeId,
 			"name": name,
-			"money": money,
+			"money": Number(money),
 			"parent": parent
 		};
 		addedData.push(template);
@@ -164,44 +163,54 @@ $('.submit_add').click(function () {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 function treeBuilder() {
-	var output = '<ul>';
-	for (var key in addedData) {
-		var status = hasChild(addedData[key].id, addedData[key].parent);
-		// if(status === false){
-		// 	<ul data-index="" data-id=""></ul>
-		// }
+	parentCheck();
+};
 
+var htmlArray = [];
 
-
-
-		output += '<li data-index="'+ key +'" data-id="'+addedData[key].id+'" data-money="'+addedData[key].money+'">' + addedData[key].name + " | " + addedData[key].money + "K$"+ '</li>';
-		console.log(addedData[key].parent);
-
-		console.log("Company name: "+ addedData[key].name +" hasChild: " + status);
+function parentCheck(){
+	var parrentCheckArray=[];
+	for(var index in addedData){
+		parrentCheckArray.push(addedData[index].id);
 	}
-
-		output += '</ul>';
-		$("#tree").html(output);
-}
-
-function hasChild(id, parent) {
-	var template = "";
-	if(parent === "none"){
-		for (var key in addedData) {
-			console.log(id);
-			if(addedData[key].parent === id){
-				template += '<li data-index="'+key+'" data-id="'+addedData[key].id+'" data-money="'+addedData[key].money+'">'+ addedData[key].name +'</li>';
-			}
+	//console.log(parrentCheckArray);
+	var template='';
+	for (var index in addedData) {
+		if(addedData[index].parent === 0){
+			template += '<ul><li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+ '<ul></ul></li></ul>';
+			parrentCheckArray.push(addedData[index].id);
 		}
-		console.log(template);
-		return false;
-	}else if (id > 0) {
-		return true;
-	} else {
-		return false;
+	}
+	$("#tree").html(template);
+	for(var index in parrentCheckArray){
+	findChild(parrentCheckArray[index]);
 	}
 };
 
+function findChild(id) {
+	var template='';
+	var arr=[];
+	for(var index in addedData){
+		if(addedData[index].parent === id && hasChild(addedData[index].id) === true){
+			template += '<li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+ '<ul></ul></li>';
+			arr.push(addedData[index].id);
+		}else if(addedData[index].parent === id && hasChild() === false){
+			template += '<li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+ '</li>';
+			arr.push(addedData[index].id);
+		}
+	}
+	//console.log(arr)
+	$('#tree li[data-id="'+id+'"] ul').html(template);
+};
+
+function hasChild(id) {
+	for (var index in addedData) {
+		if(addedData[index].parent === id){
+			return true;
+		}
+	}
+	return false;
+};
 ///////////////////////////////////////////////////////////////////////////////
 /////////////////////////SORT//////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -210,12 +219,10 @@ function sortByKey(array, key) {
 	return array.sort(function(a, b) {
 	  var x = a[key]; var y = b[key];
 	  return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-	}).reverse();
+	});
 };
 
 
 
 
 reviewdata();
-// TO DO
-// finish treeBuilder
