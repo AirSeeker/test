@@ -72,6 +72,9 @@ $('.picker').click(function () {
 	$('#'+dad+' #company_money').val(money);
 	var parent = companyObject.parent;
 	$('#'+dad+' .parent option[data-id="'+parent+'"]').prop('selected', true);
+	$('#tree li[data-id="'+companyObject.id+'"] li').each(function (index, value) { 
+	  $('#'+dad+' .parent option[data-id="'+Number($(this).attr('data-id'))+'"]').remove();
+	});
 	$('#'+dad+' .parent option[data-id="'+companyObject.id+'"]').remove();
 });
 
@@ -247,6 +250,7 @@ function subArray(sub){
 		}
 	}
 };
+
 function nested(f){
   return f.sort((a,b) => a.id.length < b.id.length ? 1 : a.id.length == b.id.length ? a.id < b.id ? -1 : 1 :-1)
           .reduce((p,c,i,a) => {var parent = !!c.parent && a.find(e => e.id === c.parent);
@@ -293,6 +297,4 @@ function sortByKey(array, key) {
 reviewdata();
 
 //to do
-// fix DELETE
-// when delete one company all sub company's should be deleted also
-// when edit company show company's that are not child's
+// finish money
