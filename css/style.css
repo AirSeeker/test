@@ -4,3 +4,9 @@ ul {
 .container{
 	margin-bottom: 50px;
 }
+.submit_delete_all{
+	margin-right: 20px;
+}
+.submit_delete_all, .submit_delete_cancel{
+	margin-top: 20px;
+}

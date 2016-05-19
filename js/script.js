@@ -38,7 +38,6 @@ function postdata() {
 };
 
 function reviewdata() {
-	$("#tree").html('<h3 class="text-center text-uppercase text-info ">Loading .....</h3>');
 	var jqXHR = $.getJSON('https://api.myjson.com/bins/3uoya');
  	jQuery.support.cors = true;
 	jqXHR.complete(function(response) {
@@ -51,6 +50,7 @@ function reviewdata() {
 			list += '<option data-index="'+ key +'" data-id="'+addedData[key].id+'">' + addedData[key].name + '</option>';
 		}
 		$('.parent, .company').html(list);
+		$('#tree').html(" ");
 		parentCheck();
 	});
 };
@@ -92,6 +92,7 @@ $('.submit_edit').click(function () {
 		addedData[companyIndex].money = Number(money);
 		addedData[companyIndex].parent = parent;
 		postdata();
+		reviewdata();
 	}
 });
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,9 +109,69 @@ $('.submit_delete').click(function () {
 			});
 		});
 	}else{
-		var companyIndex = $('#page3 .company option:selected').data('index');
-		addedData.splice(companyIndex, 1);
-		postdata();
+		$('.submit_delete').hide();
+		$('#page3 .company, label').hide();
+		$('.childrens').html('<li data-id="'
+			+ $('#page3 .company option:selected').data("id")+'"' 
+			+'>' +  $('#tree li[data-id="'+$('#page3 .company option:selected').data("id")+'"]').html()); 
+		var arrForDel = [];
+			$('.childrens li').each(function (index, value) { 
+	  		arrForDel.push(Number($(this).attr('data-id')));
+		});
+			console.log(arrForDel);
+		if (arrForDel.length === 1) {
+			$('.childrens').html('Are you sure? This company has no children!<br><ul><li data-id="'
+			+ $('#page3 .company option:selected').data("id")+'"' +'>' 
+			+ $('#tree li[data-id="'+$('#page3 .company option:selected').data("id")+'"]').html() 
+			+ '<br><button type="button" class="btn btn-default submit_delete_all">DELETE</button>'
+			+ '<button type="button" class="btn btn-default submit_delete_cancel">CANCEL</button>'
+			);
+		} else {
+			$('.childrens').html('Are you sure? This company has children!<br><ul><li data-id="'
+			+ $('#page3 .company option:selected').data("id")+'"' +'>' 
+			+ $('#tree li[data-id="'+$('#page3 .company option:selected').data("id")+'"]').html() +
+			 '<br> <b>THEY ALL WILL BE DELETED!</b>'+
+			 '<br> <i>Recommendation: remove parent assignment from child companies before deletion</i>'+
+							'<button type="button" class="btn btn-default submit_delete_all">DELETE ALL OF THEM</button>'+
+							'<button type="button" class="btn btn-default submit_delete_cancel">CANCEL</button>'
+			);
+		}
+
+		
+		$('.submit_delete_all').click(function () {
+			var arrForDel = [];
+			$('.childrens li').each(function (index, value) { 
+	  		arrForDel.push(Number($(this).attr('data-id')));
+			});
+
+			for(var index in arrForDel){
+				del(arrForDel[index]);
+
+			}
+
+			function del(id) {
+								console.log(id);
+				for(var index in addedData){
+					if(addedData[index].id === id){
+						console.log(addedData[index]);
+						addedData.splice(index, 1);
+					}
+				}
+			}
+			postdata();
+			reviewdata();
+			$('.childrens').html(' ');
+			$('.submit_delete').show();
+			$('#page3 .company, label').show(); 
+		});
+
+
+
+		$('.submit_delete_cancel').click(function () {
+		$('.childrens').html(' ');
+		$('.submit_delete').show();
+		$('#page3 .company, label').show();
+		});
 	}
 });
 
@@ -157,6 +218,7 @@ $('.submit_add').click(function () {
 		};
 		addedData.push(template);
 		postdata();
+		reviewdata();
 	}
 });
 
@@ -166,9 +228,8 @@ $('.submit_add').click(function () {
 ///////////////////////////////////////////////////////////////////////////////
 function parentCheck(){
 	var tree = nested(nestedData);
-	// console.log(tree);
+
 	for(var key in tree){
-		// console.log(tree[key]);
 		if($('li[data-id="'+tree[key].id+'"]').length <=0){
 			var template = '<ul><li data-id="'+tree[key].id+'" data-money="'+tree[key].money+'">' +tree[key].name+'	<span class="label label-success">'+ tree[key].money+' $K'+'</span></li></ul><hr>';
 			$("#tree").append(template);
@@ -179,7 +240,6 @@ function parentCheck(){
 
 function subArray(sub){
 	for(var key in sub){
-
 		if($('li[data-id="'+sub[key].id+'"]').length <=0){
 			var template = '<ul><li data-id="'+sub[key].id+'" data-money="'+sub[key].money+'">' +sub[key].name+'	<span class="label label-success">'+ sub[key].money+' $K'+'</span></li></ul>';
 			$('#tree li[data-id="'+sub[key].parent+'"]').append(template);
@@ -187,13 +247,7 @@ function subArray(sub){
 		}
 	}
 };
-
-function buildSub(){
-
-};
-
 function nested(f){
-	// console.log(f);
   return f.sort((a,b) => a.id.length < b.id.length ? 1 : a.id.length == b.id.length ? a.id < b.id ? -1 : 1 :-1)
           .reduce((p,c,i,a) => {var parent = !!c.parent && a.find(e => e.id === c.parent);
                                 !!parent ? !!parent.Sub && parent.Sub.push(c) || (parent.Sub=[c]) : p.push(c);
@@ -211,7 +265,15 @@ function nested(f){
 // $("li").map(function() {
 //     return $(this).data("money");
 // }).get();
+	// 		$('.childrens li').each(function (index, value) { 
+	//  // var cont = $(this).text() ;
+	// //console.log(cont);
+	// //cont += $(this).attr('data-money');
+	//   //$(this).text(cont);
 
+	//   		arrForDel.push(Number($(this).attr('data-id')));
+
+	// 		});
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -231,18 +293,6 @@ function sortByKey(array, key) {
 reviewdata();
 
 //to do
-//fix edit
-//		you cant put parent id on child's
-//		find child push to array
-//		forEach in array search for more child => push to array
-//		and again until you cant find any id for this child
-//
-//
-//
-//
-//
-//find all child of parent 0
-//then find for each child of parent 0 if they have child's
-//put all child of parent into object "parentID":{"child":"5,6,9,8,7"}
-//make new key parentID.htmlCode = ""; if child one have child
-//if have child then put in child array "1": {"id": "1,2,3,4"}
+// fix DELETE
+// when delete one company all sub company's should be deleted also
+// when edit company show company's that are not child's
