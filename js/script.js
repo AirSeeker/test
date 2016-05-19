@@ -162,24 +162,27 @@ $('.submit_add').click(function () {
 /////////////////////////TREE BUILDER//////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
+var arr = [];
 function treeBuilder() {
 	for(var index in addedData){
 		parentCheck(addedData[index],index);
 		hasChild(addedData[index].id);
 	}
+console.log(arr);
+arr.length = 0;
+console.log(arr);
 };
-var arr = [];
+
 function parentCheck(ob,ind){
 	var getHtml = 	$("#tree").html();
 	var getHtmlById = $('#tree li[data-id="'+ob.id+'"] ul').html();
 	if(ob.parent === 0 && $('li[data-id="'+ob.id+'"]').length <=0){
 		arr.push(ob.id);
-		var template = '<ul><li data-index="'+ind+'" data-id="'+ob.id+'" data-money="'+ob.money+'">' +ob.name+ '<ul></ul></li></ul><hr>';
+		var template = '<ul><li data-index="'+ind+'" data-id="'+ob.id+'" data-money="'+ob.money+'">' +ob.name+'	<span class="label label-success">'+ ob.money+' $K'+'</span><ul></ul></li></ul><hr>';
 		$("#tree").html(getHtml+template);
 	}else {
-		var uniq = [ ...new Set(arr) ];
-		for(var index in uniq){
-		findChild(uniq[index]);
+		for(var index in arr){
+		findChild(arr[index]);
 		}
 	}
 };
@@ -188,9 +191,9 @@ function findChild(id) {
 	var template='';
 	for(var index in addedData){
 		if(addedData[index].parent === id && hasChild(addedData[index].id) === true){
-			template += '<li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+ '<ul></ul></li>';
+			template += '<li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+'	<span class="label label-success">'+ addedData[index].money+' $K'+'</span><ul></ul></li>';
 		}else if(addedData[index].parent === id && hasChild(addedData[index].id) === false){
-			template += '<li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+ '</li>';
+			template += '<li data-index="'+index+'" data-id="'+addedData[index].id+'" data-money="'+addedData[index].money+'">' +addedData[index].name+'	<span class="label label-success">'+ addedData[index].money+' $K'+'</span></li>';
 		}
 	}
 	$('#tree li[data-id="'+id+'"] ul').html(template);
@@ -200,6 +203,7 @@ function hasChild(id) {
 	for (var index in addedData) {
 		if(addedData[index].parent === id){
 			arr.push(addedData[index].id);
+			arr = [ ...new Set(arr) ];
 			return true;
 		}
 	}
@@ -215,7 +219,9 @@ function moneyCounter(argument) {
 };
  $('#tree li[data-id="12"] li').last().parent();
  $('#tree > ul').data('id');
-
+$("li").map(function() {
+    return $(this).data("money");
+}).get();
 
 
 
@@ -234,3 +240,10 @@ function sortByKey(array, key) {
 
 
 reviewdata();
+
+//to do
+//find all child of parent 0
+//then find for each child of parent 0 if they have child's
+//put all child of parent into object "parentID":{"child":"5,6,9,8,7"}
+//make new key parentID.htmlCode = ""; if child one have child
+//if have child then put in child array "1": {"id": "1,2,3,4"}
