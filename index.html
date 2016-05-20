@@ -23,14 +23,15 @@
 			<div class="col-md-6">
 				<!-- Nav tabs -->
 				<ul class="nav nav-tabs" role="tablist">
-				  <li role="presentation" class="active"><a href="#page1" aria-controls="page1" role="tab" data-toggle="tab">ADD</a></li>
+				  <li role="presentation" class="active"><a href="#page4" aria-controls="page4" role="tab" data-toggle="tab">VIEW</a></li>
+				  <li role="presentation"><a href="#page1" aria-controls="page1" role="tab" data-toggle="tab">ADD</a></li>
 				  <li role="presentation"><a href="#page2" aria-controls="page2" role="tab" data-toggle="tab">EDIT</a></li>
 				  <li role="presentation"><a href="#page3" aria-controls="page3" role="tab" data-toggle="tab">DELETE</a></li>
 				</ul>
 
 				<!-- Tab panes -->
 				<div class="tab-content">
-				  <div role="tabpanel" class="tab-pane active" id="page1">
+				  <div role="tabpanel" class="tab-pane" id="page1">
 						<h3>Add new company</h3>
 						<hr>
 						<form id="left_side">
@@ -92,16 +93,32 @@
 							<button type="button" class="btn btn-default submit_delete">DELETE</button>
 						</form>
 				  </div>
+				  <div role="tabpanel" class="tab-pane active" id="page4">
+						<h3>View company status</h3>
+						<hr>
+						<form id="left_side">
+							<div class="form-group">
+					  		<label>Pick company</label>
+					  		<div class="form-group">
+					  			<select class="form-control company"></select>
+					  		</div>
+					  	</div>
+					  	<div class="childrens">
+							<div class="well">
+								<div class="container">
+									<div class="row">
+										<div class="col-md-6 company_info"></div>
+										<div class="col-md-6 child_tree"></div>
+									</div>
+								</div>
+							</div>
+					  	</div>
+						</form>
+				  </div>
 				</div>
 			</div>
 		</div>
 	</div>
-
-
-
-
-
-
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>

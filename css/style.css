@@ -1,5 +1,5 @@
 ul {
-    padding-left: 15px;
+    padding-left: 8px;
 }
 .container{
 	margin-bottom: 50px;
@@ -9,4 +9,7 @@ ul {
 }
 .submit_delete_all, .submit_delete_cancel{
 	margin-top: 20px;
+}
+#left_side > div.childrens > div > div{
+	width: 100%;
 }

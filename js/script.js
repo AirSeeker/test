@@ -44,7 +44,7 @@ function reviewdata() {
 		recivedData = response.responseJSON;
 		addedData = sortByKey(recivedData,'parent');
 		nestedData = $.extend(true, [], recivedData);
-		$('h1').html("<b>Company organizer</b></br><i> status: "+ Object.keys(addedData).length +" company's loaded</i>");
+		$('h1').html("<b>Company organizer</b></br><i> status: "+ Object.keys(addedData).length +" companies loaded</i>");
 		var list = '<option data-id="0">none</option>';
 		for (var key in addedData) {
 			list += '<option data-index="'+ key +'" data-id="'+addedData[key].id+'">' + addedData[key].name + '</option>';
@@ -115,22 +115,22 @@ $('.submit_delete').click(function () {
 	}else{
 		$('.submit_delete').hide();
 		$('#page3 .company, label').hide();
-		$('.childrens').html('<li data-id="'
+		$('#page3 .childrens').html('<li data-id="'
 			+ $('#page3 .company option:selected').data("id")+'"' 
 			+'>' +  $('#tree li[data-id="'+$('#page3 .company option:selected').data("id")+'"]').html()); 
 		var arrForDel = [];
-			$('.childrens li').each(function (index, value) { 
+			$('#page3 .childrens li').each(function (index, value) { 
 	  		arrForDel.push(Number($(this).attr('data-id')));
 		});
 		if (arrForDel.length === 1) {
-			$('.childrens').html('Are you sure? This company has no children!<br><ul><li data-id="'
+			$('#page3 .childrens').html('Are you sure? This company has no children!<br><ul><li data-id="'
 			+ $('#page3 .company option:selected').data("id")+'"' +'>' 
 			+ $('#tree li[data-id="'+$('#page3 .company option:selected').data("id")+'"]').html() 
 			+ '<br><button type="button" class="btn btn-default submit_delete_all">DELETE</button>'
 			+ '<button type="button" class="btn btn-default submit_delete_cancel">CANCEL</button>'
 			);
 		} else {
-			$('.childrens').html('Are you sure? This company has children!<br><ul><li data-id="'
+			$('#page3 .childrens').html('Are you sure? This company has '+ (Number(arrForDel.length) -1)+' children!<br><ul><li data-id="'
 			+ $('#page3 .company option:selected').data("id")+'"' +'>' 
 			+ $('#tree li[data-id="'+$('#page3 .company option:selected').data("id")+'"]').html() +
 			 '<br> <b>THEY ALL WILL BE DELETED!</b>'+
@@ -142,7 +142,7 @@ $('.submit_delete').click(function () {
 
 		$('.submit_delete_all').click(function () {
 			var arrForDel = [];
-			$('.childrens li').each(function (index, value) { 
+			$('#page3 .childrens li').each(function (index, value) { 
 	  		arrForDel.push(Number($(this).attr('data-id')));
 			});
 
@@ -160,16 +160,63 @@ $('.submit_delete').click(function () {
 			}
 			postdata();
 			reviewdata();
-			$('.childrens').html(' ');
-			$('.submit_delete').show();
+			$('#page3 .childrens').html(' ');
+			$('#page3 .submit_delete').show();
 			$('#page3 .company, label').show(); 
 		});
 
 		$('.submit_delete_cancel').click(function () {
-			$('.childrens').html(' ');
-			$('.submit_delete').show();
+			$('#page3 .childrens').html(' ');
+			$('#page3 .submit_delete').show();
 			$('#page3 .company, label').show();
 		});
+	}
+});
+///////////////////////////////////////////////////////////////////////////////
+/////////////////////////VIEW//////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+$('#page4 .company').change(function () {
+	if($('#page4 .company option:selected').data("id") === 0){
+		$(function(){
+			new PNotify({
+				title: 'Oh No!',
+				text: 'Please chose company to view status.',
+				type: 'error'
+			});
+		});
+	}else{
+	var index = $('#page4 .company option:selected').data("index");
+	var ob = addedData[index];
+	var counter = [];
+	var num = 0;
+	$('#tree li[data-id="'+$('#page4 .company option:selected').data("id")+'"] li').each(function (index, value) { 
+	  	counter.push(Number($(this).attr('data-id')));
+	});
+	console.log(counter);
+	if(counter.length == 0){
+		num = 'no';
+	}else{
+		num = Number(counter.length);
+	}
+	var totalMoney = '';
+	var total = $('#tree li[data-id="' + $('#page4 .company option:selected').data("id")+'"] > span.label.label-info').html();
+	if(total == ''){
+		totalMoney = $('#tree li[data-id="' + $('#page4 .company option:selected').data("id")+'"] > span.label.label-success').html();
+	}else{
+		totalMoney = total;
+	} 
+	$('#page4 .childrens .company_info').html(
+		'<label>Information</label>'+
+		'<p><b>Name :</b> '+ ob.name +'</p>'+
+		'<p><b>Earnings :</b> '+ ob.money +' $K </p>'+
+		'<p><b>Total earnings :</b> ' + 
+		totalMoney+ '</p>'+
+		'<p><b>Child companies :</b> '+ num +'</p>').html();
+
+	$('#page4 .childrens .child_tree').html('<label>Child tree</label><ul><li data-id="'
+			+ $('#page4 .company option:selected').data("id")+'"' 
+			+'>' +  $('#tree li[data-id="'+$('#page4 .company option:selected').data("id")+'"]').html()+'</ul>');
 	}
 });
 
