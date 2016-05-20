@@ -52,6 +52,7 @@ function reviewdata() {
 		$('.parent, .company').html(list);
 		$('#tree').html(" ");
 		parentCheck();
+		moneyCounter();
 	});
 };
 
@@ -121,7 +122,6 @@ $('.submit_delete').click(function () {
 			$('.childrens li').each(function (index, value) { 
 	  		arrForDel.push(Number($(this).attr('data-id')));
 		});
-			console.log(arrForDel);
 		if (arrForDel.length === 1) {
 			$('.childrens').html('Are you sure? This company has no children!<br><ul><li data-id="'
 			+ $('#page3 .company option:selected').data("id")+'"' +'>' 
@@ -135,12 +135,11 @@ $('.submit_delete').click(function () {
 			+ $('#tree li[data-id="'+$('#page3 .company option:selected').data("id")+'"]').html() +
 			 '<br> <b>THEY ALL WILL BE DELETED!</b>'+
 			 '<br> <i>Recommendation: remove parent assignment from child companies before deletion</i>'+
-							'<button type="button" class="btn btn-default submit_delete_all">DELETE ALL OF THEM</button>'+
+							'<br><button type="button" class="btn btn-default submit_delete_all">DELETE ALL OF THEM</button>'+
 							'<button type="button" class="btn btn-default submit_delete_cancel">CANCEL</button>'
 			);
 		}
 
-		
 		$('.submit_delete_all').click(function () {
 			var arrForDel = [];
 			$('.childrens li').each(function (index, value) { 
@@ -153,10 +152,8 @@ $('.submit_delete').click(function () {
 			}
 
 			function del(id) {
-								console.log(id);
 				for(var index in addedData){
 					if(addedData[index].id === id){
-						console.log(addedData[index]);
 						addedData.splice(index, 1);
 					}
 				}
@@ -168,12 +165,10 @@ $('.submit_delete').click(function () {
 			$('#page3 .company, label').show(); 
 		});
 
-
-
 		$('.submit_delete_cancel').click(function () {
-		$('.childrens').html(' ');
-		$('.submit_delete').show();
-		$('#page3 .company, label').show();
+			$('.childrens').html(' ');
+			$('.submit_delete').show();
+			$('#page3 .company, label').show();
 		});
 	}
 });
@@ -261,23 +256,45 @@ function nested(f){
 /////////////////////////MONEY COUNTER/////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-// function moneyCounter(argument) {
-// 	$('#tree').find('li');	
-// };
-//  $('#tree li[data-id="12"] li').last().parent();
-//  $('#tree > ul').data('id');
-// $("li").map(function() {
-//     return $(this).data("money");
-// }).get();
-	// 		$('.childrens li').each(function (index, value) { 
-	//  // var cont = $(this).text() ;
-	// //console.log(cont);
-	// //cont += $(this).attr('data-money');
-	//   //$(this).text(cont);
+function moneyCounter() {
 
-	//   		arrForDel.push(Number($(this).attr('data-id')));
+	status = 0;
+	var parents=[];
+	for (var index in addedData) {
+		if(addedData[index].parent === 0){
+			parents.push(addedData[index].id)
+		}
+	}
+	setMoney(parents);
 
-	// 		});
+	function setMoney(list) {
+		var childs=[];
+		for(var index in list){
+			var sum = 0;
+			if(($('#tree li[data-id="'+list[index]+'"] li').length === 0 || list.length === 0) && !$('#tree li[data-id="'+list[index]+'"] li').is(':has(span.label-info)')){
+				$('#tree li[data-id="'+list[index]+'"] > span').after(" <span class='label label-info'></span>" );
+			}else if(!$('#tree li[data-id="'+list[index]+'"] li').is(':has(span.label-info)')){
+				$('#tree li[data-id="'+list[index]+'"] li').each(function (index, value) { 
+					sum += Number($(this).attr('data-money'));
+					if($('#tree li[data-id="'+list[index]+'"] li') !== 0 && !$('#tree li[data-id="'+list[index]+'"] li').is(':has(span.label-info)')){
+						childs.push($(this).attr('data-id'));
+					}
+				});	
+				sum += Number($('#tree li[data-id="'+list[index]+'"]').data('money'));
+				if(!$('#tree li[data-id="'+list[index]+'"] li').is(':has(span.label-info)')){
+					$('#tree li[data-id="'+list[index]+'"] > span').after( " <span class='label label-info'>"+ sum +" $K </span>" );
+				}
+
+			}
+		}
+		childs = jQuery.unique(childs);
+		if(childs.length !== 0){
+			setMoney(childs);
+		}
+	};
+};
+
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -291,10 +308,4 @@ function sortByKey(array, key) {
 	});
 };
 
-
-
-
 reviewdata();
-
-//to do
-// finish money
