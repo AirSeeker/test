@@ -12,7 +12,7 @@ function postdata() {
 	    data: JSON.stringify(addedData),
 	    contentType:"application/json; charset=utf-8",
 	    dataType:"json",
-	    success: function(data, textStatus, jqXHR){
+	    success: function(data){
 		    $(function(){
 					new PNotify({
 					    title: 'Success',
@@ -24,7 +24,7 @@ function postdata() {
 	    	$('input').val('');
 	    	$('option[data-id="0"]').prop('selected', true);
 	    },
-	    error: function(data, textStatus, jqXHR){
+	    error: function(){
 		    $(function(){
 					new PNotify({
 				    title: 'Oh No!',
@@ -63,14 +63,14 @@ function reviewdata() {
 
 var dad, companyIndex;
 $('.picker').click(function () {
-	$('#left_side > div:nth-child(4) > select').html($('#'+dad+' .company').html());
+	$('.left_side > div:nth-child(4) > select').html($('#'+dad+' .company').html());
 	dad = $(this).parent().parent().parent().parent().attr('id');
 	companyIndex = $('#'+dad+' .company option:selected').data('index');
 	var companyObject = addedData[companyIndex];
 	var name = companyObject.name;
-	$('#'+dad+' #company_name').val(name);
+	$('#'+dad+' .company_name').val(name);
 	var money = companyObject.money;
-	$('#'+dad+' #company_money').val(money);
+	$('#'+dad+' .company_money').val(money);
 	var parent = companyObject.parent;
 	$('#'+dad+' .parent option[data-id="'+parent+'"]').prop('selected', true);
 	$('#tree li[data-id="'+companyObject.id+'"] li').each(function (index, value) { 
@@ -79,8 +79,9 @@ $('.picker').click(function () {
 	$('#'+dad+' .parent option[data-id="'+companyObject.id+'"]').remove();
 });
 
-$('.submit_edit').click(function () {
-	if($('#page2 #company_name').val() === "" || $('#page2 #company_money').val() === ""){
+//noinspection JSUnresolvedFunction
+$(".submit_edit").click(function () {
+	if($('#page2 .company_name').val() === "" || $('#page2 .company_money').val() === ""){
 		$(function(){
 			new PNotify({
 				title: 'Oh No!',
@@ -89,8 +90,8 @@ $('.submit_edit').click(function () {
 			});
 		});
 	}else{
-		var name = $('#'+dad+' #company_name').val();
-		var money = $('#'+dad+' #company_money').val();
+		var name = $('#'+dad+' .company_name').val();
+		var money = $('#'+dad+' .company_money').val();
 		var parent = $('#'+dad+' .parent option:selected').data("id");
 		addedData[companyIndex].name = name;
 		addedData[companyIndex].money = Number(money);
@@ -225,7 +226,7 @@ $('#page4 .company').change(function () {
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 $('.submit_add').click(function () {
-	if($('#page1 #company_name').val() === "" || $('#page1 #company_money').val() === ""){
+	if($('#page1 .company_name').val() === "" || $('#page1 .company_money').val() === ""){
 		$(function(){
 			new PNotify({
 				title: 'Oh No!',
@@ -236,7 +237,7 @@ $('.submit_add').click(function () {
 	}else{
 
 	for (var key in addedData) {
-		if(addedData[key].name === $('#company_name').val()){
+		if(addedData[key].name === $('.company_name').val()){
 			return $(function(){
 				new PNotify({
 					title: 'Oh No!',
@@ -252,8 +253,8 @@ $('.submit_add').click(function () {
 		}
 		freeId.sort(function(a, b){return a-b;});
 		freeId=freeId[freeId.length-1]+1;
-		var name = $('#company_name').val();
-		var money = $('#company_money').val();
+		var name = $('.company_name').val();
+		var money = $('.company_money').val();
 		var parent = $('.parent option:selected').data("id");
 		var template = {
 			"id": freeId,
@@ -338,8 +339,8 @@ function moneyCounter() {
 		if(childs.length !== 0){
 			setMoney(childs);
 		}
-	};
-};
+	}
+}
 
 
 
@@ -353,6 +354,6 @@ function sortByKey(array, key) {
 	  var x = a[key]; var y = b[key];
 	  return ((x < y) ? -1 : ((x > y) ? 1 : 0));
 	});
-};
+}
 
 reviewdata();
